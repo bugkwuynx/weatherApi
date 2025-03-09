@@ -1,4 +1,3 @@
-'use client';
 import { useState, useEffect } from 'react';
 import {
     Card,
@@ -63,22 +62,23 @@ function WeatherCard() {
     setLoading(true);
     setError(null);
     try {
-      console.log(data);
-      const response = await fetch('/api/weather', {
+      const response = await fetch(process.env.NEXT_PUBLIC_API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch weather data');
+      }
+      
       const result = await response.json();
       setWeatherData(result);
-      console.log(result);
     } catch (error) {
-
       console.error('Error sending data:', error);
-      setError('Failed to send data');
-
+      setError(error.message || 'Failed to send data');
     } finally {
       setLoading(false);
     }
