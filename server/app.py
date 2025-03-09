@@ -9,10 +9,33 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
+@app.route('/api/geolocation', methods=['POST'])
+def get_geolocation():
+    try:
+        print('received data')
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+        city = data.get('city')
+        if not city:
+            return jsonify({"error": "City is required"}), 400
+        geolocation_api_url = os.getenv('LOCATION_API_URL')
+        geolocation_api_key = os.getenv('WEATHER_API_KEY')
+        apiURL = f"{geolocation_api_url}?q={city}&appid={geolocation_api_key}"
+        print(apiURL)
+        response = requests.get(apiURL)
+        if not response.ok:
+            return jsonify({"error": "Failed to fetch geolocation data"}), response.status_code
+        geolocation_data = response.json()
+        return jsonify(geolocation_data)
+    except:
+        return jsonify({"error": "Failed to fetch geolocation data"}), 500
+
 @app.route('/api/weather', methods=['POST'])
 def get_weather():
     try:
         data = request.get_json()
+        print('received data ', data)
         if not data:
             return jsonify({"error": "No data provided"}), 400
             

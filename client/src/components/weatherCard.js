@@ -62,7 +62,7 @@ function WeatherCard() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_API_URL, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/weather`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
